@@ -1,0 +1,36 @@
+*filter
+
+-A INPUT -i lo -j ACCEPT
+-A INPUT ! -i lo -d 127.0.0.0/8 -j REJECT
+
+# VIRTUALMIN
+-A INPUT -s 192.168.1.121 -p tcp --dport 10000 -j ACCEPT
+
+# HTTP HTTPS
+-A INPUT -p tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp --dport 443 -j ACCEPT
+
+# SSH
+-A INPUT -p tcp -m tcp --dport 39218 -j ACCEPT
+-A OUTPUT -p tcp --sport 39218 -m state --state ESTABLISHED -j ACCEPT
+
+# IRC
+-A INPUT -p tcp -m tcp --sport 6667 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --dport 6667 -j ACCEPT
+
+# DNS
+-A INPUT -p tcp --dport 53 -j ACCEPT
+-A INPUT -p udp --dport 53 -j ACCEPT
+
+# ALLOW ISP NAMESERVERS
+-A INPUT -p udp -s 79.138.0.180/32 --source-port 53 -d 0/0 --destination-port 1024:65535 -j ACCEPT
+-A INPUT -p udp -s 85.8.31.209/32 --source-port 53 -d 0/0 --destination-port 1024:65535 -j ACCEPT
+
+-A INPUT -p icmp -m icmp --icmp-type 8 -j DROP
+
+-A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables denied: " --log-level 7
+
+-P INPUT DROP
+-A FORWARD -j DROP
+
+COMMIT

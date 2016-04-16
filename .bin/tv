@@ -1,0 +1,8 @@
+#!/bin/bash
+
+setDeviceEnv()
+{ 
+	ALSA_CARD=NVidia ALSA_PCM_DEVICE=7 $@;
+}
+
+setDeviceEnv $@

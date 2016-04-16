@@ -1,0 +1,7 @@
+defaults.pcm.!card Device
+defaults.ctl.!card Device
+defaults.pcm.!device { 
+	@func igetenv  
+		vars [ ALSA_PCM_DEVICE ]  
+		default 0 
+}
