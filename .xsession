@@ -1,6 +1,10 @@
 #!/bin/bash
 
-#xrdb -merge $HOME/.Xresources
+xset -dpms
+xset s off
+
+xrdb -merge $HOME/.Xresources
+
 timer=0
 gmail=0
 
