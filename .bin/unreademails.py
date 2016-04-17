@@ -3,6 +3,7 @@ import os
 import sys
 import imp
 
+# User home variable
 home = os.environ["HOME"]
 sys.path.insert(0, home + '/.config/custom')
 
@@ -16,9 +17,6 @@ except ImportError:
 if configExists is False:
     print 0
     sys.exit(1)
-
-# User home variable
-home = os.environ["HOME"]
 
 mail = imaplib.IMAP4_SSL('imap.gmail.com')
 mail.login(emailconfig.user['name'], emailconfig.user['password'])
