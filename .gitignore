@@ -3,8 +3,11 @@
 **/.dbus
 **/.dmenu_cache
 .config/*
-!.config/user-dirs.dirs
 !.config/custom
+.config/custom/*
+!.config/user-dirs.dirs
+!.config/custom/emailconfig.sample.py
+!.config/custom/iptables.rules
 *.swp
 .gnome/
 .local/
