@@ -1,8 +1,5 @@
  #!/bin/zsh
  wmctrl -l | dmenu -i -l 30 "$@" | read wid ws rest
- print $wid
- print $ws
- print $rest
  wmctrl -s $ws
  eval "$(xdotool getwindowgeometry --shell $wid)"
  xdotool mousemove 0 0 sleep .1 mousemove --sync --window $wid $(( $WIDTH / 2 )) $(( $HEIGHT / 2 ))
