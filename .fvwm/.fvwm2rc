@@ -1,0 +1,494 @@
+Emulate Fvwm
+
+# Workspaces.
+DesktopSize 1x1
+
+DesktopName 0 WEB 1
+DesktopName 1 DEV 2
+DesktopName 2 SSH 3
+DesktopName 3 MYSQL 4
+DesktopName 4 IRSSI 5
+DesktopName 5 Space 6
+DesktopName 6 Space 7
+DesktopName 7 Space 8
+DesktopName 8 Space 9
+
+# Show contents at all times.
+OpaqueMoveSize -1
+
+# I don't want auto-scrolling.
+EdgeThickness 0
+
+# And I want to utilize my entire screen real estate.
+EwmhBaseStruts 0 0 0 0
+
+#=================================================================
+# Solaris Colorset 
+#=================================================================
+
+Colorset  1 bg #a6a6a6, fg #404040, hi #c1c1c1, sh #868686
+Colorset  2 bg #6c858b, fg #ffffff, hi #819ea6, sh #54666b
+Colorset  5 bg #6c858b, fg #ffffff, hi #819ea6, sh #54666b
+Colorset  6 bg #be8c81, fg #ffffff, hi #d9a093, sh #997168
+Colorset  7 bg #edeceb, fg #000000, hi #ffffff, sh #707070
+Colorset  8 bg #edeceb, fg #000000, hi #ffffff, sh #707070
+Colorset 11 bg #ffffff
+Colorset 12 bg #749aa6
+Colorset 13 bg #edebda, hi #c0c0c0, sh #c0c0c0
+Colorset 14 bg #bebebe, hi #f4f4f4, sh #808080
+Colorset 10 VGradient 64 #a4c2e8 #84aad8, fg #ffffff
+
+
+#####################################################################
+# Menu Styles
+
+MenuStyle * Font "Shadow=1 0 SE:xft:Liberation:style=Regular:size=9"
+MenuStyle * SeparatorsShort
+MenuStyle * Hilight3DThin, Hilight3DThickness, BorderWidth 1
+MenuStyle * VerticalItemSpacing 4 4, VerticalTitleSpacing 4 4
+MenuStyle * TitleUnderlines0, TrianglesSolid
+MenuStyle * MenuColorset 5, ActiveColorset 6
+MenuStyle * HilightBack
+MenuStyle * PopupImmediately, PopupOffset 0 100
+MenuStyle * ItemFormat "%.20|%.5i%.5l%.5i%14.0>%8.|"
+MenuStyle * !AutomaticHotkeys
+
+MenuStyle WindowList Font "Shadow=1 0 SE:xft:Ubuntu:style=Regular:size=10"
+MenuStyle WindowList SeparatorsShort
+MenuStyle WindowList Hilight3DThin, Hilight3DThickness, BorderWidth 1
+MenuStyle WindowList VerticalItemSpacing 15 15, VerticalTitleSpacing 5 5
+MenuStyle WindowList TitleUnderlines0, TrianglesSolid
+MenuStyle WindowList MenuColorset 5, ActiveColorset 6
+MenuStyle WindowList HilightBack
+MenuStyle WindowList PopupImmediately, PopupOffset 0 100
+MenuStyle WindowList ItemFormat "%.20|%.5i%.5l%.5i%14.0>%8.|"
+MenuStyle WindowList !AutomaticHotkeys
+
+#=================================================================
+# Window Decorations
+#=================================================================
+
+Style * HandleWidth 1
+Style *	Colorset 1
+
+Style * HilightColorset 1
+Style * BorderColorset 1
+Style * HilightBorderColorset 1
+
+Style * IconTitleColorset 1
+Style * HilightIconTitleColorset 1
+Style * IconTitleRelief 1
+
+
+Style * SloppyFocus, MouseFocusClickRaises
+
+DestroyDecor Default
+AddToDecor Default
+
+#***********************************************************************
+# Titlebar
+#***********************************************************************
++ TitleStyle AllActive		Colorset 2 -- Flat
++ TitleStyle AllInactive 	Colorset 3 -- Flat
++ TitleStyle LeftJustified
+
++ BorderStyle -- HiddenHandles NoInset
+
+#####################################################################
+# Program Specific Styles
+
+Style FvwmPager IconBox screen w 24 24 -24 -24, IconFill right bottom, IconGrid 48 48
+Style FvwmPager PositionPlacement Center
+
+Style FvwmWorkspaceManager !Handles, Sticky, ClickToFocusPassesClickOff
+Style FvwmWorkspaceManager !Button 1, !Button 2, !Button 3, !Button 6
+Style FvwmWorkspaceManager !StickyStippledTitle, !StickyStippledIconTitle
+Style FvwmWorkspaceManager TitleAtBottom, WindowListSkip
+
+Style FvwmIdent PositionPlacement Center, !Title, !Handles
+
+Style FvwmConsole Sticky, !Button 3
+Style FvwmConsole !StickyStippledTitle, !StickyStippledIconTitle
+
+Style "xterm" PositionPlacement Center
+
+#####################################################################
+# Mouse Bindings
+
+ClickTime 300
+
+Mouse 1 R A Nop
+Mouse 1 A S4 Iconify 
+Mouse 1 W 4 Move-on-Drag-Lower-on-Doubleclick
+Mouse 1 I A Move-or-DeIconify
+Mouse 2 A 4 Maximize
+Mouse 2 FTSI A Iconify
+Mouse 3 W 4  Resize-on-Drag
+
+#####################################################################
+# Functions
+
+AddToFunc StartFunction
++ I Exec exec /usr/bin/xrdb -merge ~/.Xresources
++ I Test (Init) StartFunction_OnInitOnly 
++ I Module FvwmCommandS
++ I Module FvwmEvent
++ I StartWorkspaceManager
++ I RearrangeIcons
+
+DestroyFunc StartFunction_OnInitOnly
+AddToFunc   StartFunction_OnInitOnly
+#+ I Exec exec /usr/bin/gnome-settings-daemon
+#+ I Exec exec /usr/bin/nautilus --no-default-window --no-desktop
+
+# Doubleclick Deiconify
+AddToFunc Move-or-DeIconify "I" Raise
++ "M" Move
++ "D" Iconify
+
+DestroyFunc MoveNonMaximized
+AddToFunc   MoveNonMaximized
++ I ThisWindow (!Maximized) Move
+
+DestroyFunc ResizeNonMaximized
+AddToFunc   ResizeNonMaximized
++ I ThisWindow (!Maximized) Resize
+
+DestroyFunc Raise-Move-or-Lower
+AddToFunc   Raise-Move-or-Lower
++ M MoveNonMaximized
++ C Raise
++ D Lower
+
+DestroyFunc Move-on-Drag-Lower-on-Doubleclick
+AddToFunc   Move-on-Drag-Lower-on-DoubleClick
++ I Raise
++ M MoveNonMaximized
++ D Lower
+
+DestroyFunc Deiconify
+AddToFunc   Deiconify
++ D Iconify off
+
+DestroyFunc Close-on-Double-Click
+AddToFunc   Close-on-Double-Click
++ D Close
+
+DestroyFunc Stick-on-Double-Click
+AddToFunc   Stick-on-Double-Click
++ D Stick
+
+DestroyFunc Shade-on-Click
+AddToFunc   Shade-on-Click
++ C ThisWindow (Shaded) Raise
++ C WindowShade
+
+DestroyFunc Iconify-on-Click
+AddToFunc   Iconify-on-Click
++ C Iconify
+
+DestroyFunc Maximize-on-Click
+AddToFunc   Maximize-on-Click
++ C Maximize
++ C ThisWindow (Maximized) Raise
+
+DestroyFunc Resize-on-Drag
+AddToFunc   Resize-on-Drag
++ C Menu MenuWindowOps
++ I Raise
++ M ResizeNonMaximized 
+
+DestroyFunc MakeMenuWindowOps
+AddToFunc   MakeMenuWindowOps
++ I DestroyMenu recreate MenuWindowOps
++ I AddToMenu MenuWindowOps "&Iconify" Iconify
++ I ThisWindow (Shaded) AddToMenu MenuWindowOps "&Roll-Down" WindowShade False
++ I TestRc     (!Match) AddToMenu MenuWindowOps "&Roll-Up"   WindowShade True
++ I AddToMenu MenuWindowOps "&Move..." Move
++ I ThisWindow (!Maximized) AddToMenu MenuWindowOps "Re&size..." ResizeNonMaximized
++ I TestRc     (!Match)     AddToMenu MenuWindowOps "Demaximize" Maximize Off
++ I AddToMenu MenuWindowOps "" Nop
++ I ThisWindow (Sticky) AddToMenu MenuWindowOps "Un&stick" Stick False
++ I TestRc     (!Match) AddToMenu MenuWindowOps "&Stick"   Stick True
++ I AddToMenu MenuWindowOps "Send to Back" Lower
++ I AddToMenu MenuWindowOps "" Nop
++ I AddToMenu MenuWindowOps "&Layer" Popup MenuWindowLayer
++ I AddToMenu MenuWindowOps "&Workspace" Popup MenuWindowWorkspace
++ I AddToMenu MenuWindowOps "Move" Popup MenuWindowMove
++ I AddToMenu MenuWindowOps "" Nop
++ I AddToMenu MenuWindowOps "Window Information..." Module FvwmIdent -transient
++ I AddToMenu MenuWindowOps "" Nop
++ I AddToMenu MenuWindowOps "&Close" Close
+
+DestroyFunc MakeMenuIconOps
+AddToFunc   MakeMenuIconOps
++ I DestroyMenu recreate MenuIconOps
++ I AddToMenu MenuIconOps "&Deconify" Iconify False
++ I AddToMenu MenuIconOps "" Nop
++ I ThisWindow (Sticky) AddToMenu MenuIconOps "Un&stick" Stick False
++ I TestRc     (!Match) AddToMenu MenuIconOps "&Stick"   Stick True
++ I AddToMenu MenuIconOps "" Nop
++ I AddToMenu MenuIconOps "Move to &Workspace..." Popup MenuWindowWorkspace
++ I AddToMenu MenuIconOps "" Nop
++ I AddToMenu MenuIconOps "Window Information..." Module FvwmIdent -transient
++ I AddToMenu MenuIconOps "" Nop
++ I AddToMenu MenuIconOps "&Close" Close
+
+DestroyFunc StartWorkspaceManager
+AddToFunc   StartWorkspaceManager
++ I Module FvwmPager FvwmWorkspaceManager 0 8
+
+DestroyFunc ShowWorkspaceManager
+AddToFunc   ShowWorkspaceManager
++ I All (FvwmWorkspaceManager, Iconic) Iconify off
+
+DestroyFunc HideWorkspaceManager
+AddToFunc   HideWorkspaceManager
++ I All (FvwmWorkspaceManager, !Iconic) Iconify on
++ I All (FvwmWorkspaceManager, Iconic) PlaceAgain Icon
+
+DestroyFunc ToggleWorkspaceManager
+AddToFunc   ToggleWorkspaceManager
++ I ShowWorkspaceManager
++ I TestRc (NoMatch) HideWorkspaceManager
+
+DestroyFunc RearrangeIcons
+AddToFunc   RearrangeIcons
++ I All (CurrentDesk, Iconic) PlaceAgain Icon
+
+DestroyFunc FixFvwmPager
+AddToFunc   FixFvwmPager
++ I ThisWindow (FvwmPager, Iconic) WindowStyle Layer 4
++ I ThisWindow (FvwmPager, !Iconic) WindowStyle StaysOnTop
+#+ I ThisWindow (FvwmPager, !Iconic) Move 50-50w 50-50w
+
+DestroyFunc EventDeiconify
+AddToFunc   EventDeiconify
++ I FixFvwmPager
++ I RearrangeIcons
+
+DestroyFunc EventIconify
+AddToFunc   EventIconify
++ I FixFvwmPager
+
+DestroyFunc WindowListFunc
+AddToFunc   WindowListFunc
++ I Iconify off
++ I FlipFocus
++ I Raise
++ I WarpToWindow 50 50
+
+DestroyFunc RaiseIcons
+AddToFunc   RaiseIcons
++ I All (CurrentDesk, Iconic, !Raised) Raise
+
+DestroyFunc LowerIcons
+AddToFunc   LowerIcons
++ I Exec exec xterm
++ I All (CurrentDesk, Iconic) Lower
+
+DestroyFunc RaiseOrLowerIcons
+AddToFunc   RaiseOrLowerIcons
++ I RaiseIcons
++ I TestRc (NoMatch) LowerIcons
+
+DestroyFunc StartApp
+AddToFunc StartApp
++ I Exec exec $0
++ I Wait $0
++ I Next Focus
+
+DestroyFunc MyMove
+AddToFunc MyMove I Raise
++ I Move
+
+DestroyFunc ArrangeWindowsTileVerticalMatrix
+AddToFunc ArrangeWindowsTileVerticalMatrix
++ I FvwmRearrange -tile 0 0 100 100 -mn 2 -r
+
+DestroyFunc FvwmDmenu
+AddToFunc   FvwmDmenu
++ I Exec exec `echo $PATH \
+               | sed 's/\:/ /g' \
+               | xargs ls \
+               | sed -e 's/^\/[^:]*:$//g' -e '/^$/d' \
+               | dmenu -b -p "Launch" -fn -misc-fixed-medium-r-*-*-13-*-*-*-*-*-*-r`
+
+#####################################################################
+# Menus
+
+DestroyMenu MenuTools
+AddToMenu   MenuTools
++ "GVim" Exec exec /usr/bin/gvim
++ "Text Editor (Gnome)" Exec exec /usr/bin/gnome-text-editor
++ "MySQL Workbench" Exec exec /usr/bin/mysql-workbench
++ "" Nop
++ "Root Shell" Exec exec /usr/bin/xterm -e "/usr/bin/sudo su -"
++ "Synaptic Package Manager" Exec exec gksu /usr/sbin/synaptic
+
+DestroyMenu MenuInternet
+AddToMenu   MenuInternet
++ "Firefox" Exec exec /usr/bin/firefox
++ "Google Chrome" Exec exec /usr/local/bin/google-chrome
++ "" Nop
++ "IRC" Exec exec /usr/bin/xterm -e "/bin/bash -c '/usr/bin/screen -x irc || /usr/bin/screen -S irc /usr/bin/irssi'"
+
+DestroyMenu MenuRemoteShell
+AddToMenu   MenuRemoteShell
++ "Server 01" Exec exec /usr/bin/xterm -e "/bin/bash -c '/usr/bin/ssh s01 || dialog --msgbox \"Could not connect to SSH server \\\"s01\\\".\" 10 80'"
++ "Server 03" Exec exec /usr/bin/xterm -e "/bin/bash -c '/usr/bin/ssh s03 || dialog --msgbox \"Could not connect to SSH server \\\"s03\\\".\" 10 80'"
+
+DestroyMenu MenuWorkspace
+AddToMenu   MenuWorkspace
++ "Show Workspace Manager" ShowWorkspaceManager
++ "" Nop
++ "Code"        GotoDesk 0 0
++ "Web"         GotoDesk 0 1
++ "Workspace 2" GotoDesk 0 2
++ "Music"       GotoDesk 0 3
++ "Work"        GotoDesk 0 4
++ "Console"     GotoDesk 0 5
+
+DestroyMenu MenuFvwmRoot
+AddToMenu   MenuFvwmRoot
++ "Terminal" Exec exec /usr/bin/xterm
++ "File Manager" Exec exec /usr/bin/nautilus --browser --no-desktop
++ "" Nop
++ "Tools" Popup MenuTools
++ "Internet" Popup MenuInternet
++ "Remote Shell" Popup MenuRemoteShell
++ "" Nop
++ "Rearrange Icons" RearrangeIcons
++ "" Nop
++ "Workspaces" Popup MenuWorkspace
++ "Restart Fvwm" Restart
+
+DestroyMenu MenuFvwmRootSystem
+AddToMenu   MenuFvwmRootSystem
++ "Edit ~/.fvwm/config…" Exec exec /usr/bin/gvim ~/.fvwm/config
++ "Console…" Module FvwmConsole
++ "" Nop
++ "Restart" Restart
++ "Restart Xterm" Restart xterm
++ "Quit" Quit
+
+DestroyMenu MenuWindowLayer
+AddToMenu   MenuWindowLayer
++ "Layer &2" WindowStyle Layer 2
++ "Layer &4" WindowStyle Layer 4
++ "Layer &6" WindowStyle Layer 6
+
+DestroyMenu MenuWindowWorkspace
+AddToMenu   MenuWindowWorkspace
++ "Move to Left Workspace" MoveToDesk -1 0
++ "Move to Right Workspace" MoveToDesk  1 0
++ "" Nop
++ "Code (&0)"      MoveToDesk 0 0
++ "Web (&1)"       MoveToDesk 0 1
++ "Workspace (&2)" MoveToDesk 0 2
++ "Music (&3)"     MoveToDesk 0 3
++ "Work (&4)"      MoveToDesk 0 4
++ "Console (&5)"   MoveToDesk 0 5
+
+DestroyMenu MenuWindowMove
+AddToMenu   MenuWindowMove
++ "Center" Move 50-50w 50-50w
+
+DestroyMenu MenuScreenConfig
+AddToMenu   MenuScreenConfig
++ "Laptop" Exec exec /bin/bash ~/bin/laptop.sh
++ "Multiscreen" Exec exec /bin/bash ~/bin/multiscreen.sh
+
+DestroyMenu MenuWindowOps
+AddToMenu   MenuWindowOps
++ DynamicPopupAction Function MakeMenuWindowOps
+
+DestroyMenu MenuIconOps
+AddToMenu   MenuIconOps
++ DynamicPopupAction Function MakeMenuIconOps
+
+#####################################################################
+# Key Bindings
+
+IgnoreModifiers L2
+
+Key F2 A M Exec exec grun
+Key F4 A M Pick Close
+
+Key Tab A M  WindowList Root c c CurrentDesk, NoGeometry, CurrentAtEnd, NoCurrentDeskTitle, NoOnTop, NoIcons
+Key Tab A MS WindowList Root c c CurrentDesk, NoGeometry, CurrentAtEnd, NoCurrentDeskTitle, NoOnTop
+
+Key R A CM Restart
+Key C A CM Module FvwmConsole
+Key L A CM Exec exec xscreensaver-command -lock
+Key G A CM Exec exec /usr/bin/gvim
+Key I A CM All (CurrentDesk, Iconic) Raise
+
+#Key Space FSTW13642 CM  Menu MenuWindowOps Window c c
+#Key Space A 4  Menu MenuFvwmRooe
+#Key Space A 4S Menu MenuFvwmRootSystem
+Key F1 A A Menu MenuFvwmRoot
+Key Tab A 4  ToggleWorkspaceManager
+Key P     A CM Popup MenuScreenConfig
+
+Key I     A 4 All (CurrentDesk, Iconic, !FvwmWorkspaceManager) RaiseOrLowerIcons
+
+Key Up    A 4 GotoDesk -3 0 8
+Key Down  A 4 GotoDesk +3 0 0 8
+Key Left  A 4 GotoDesk -1 0 0 8
+Key Right A 4 GotoDesk  1 0 0 8
+
+
+Key Return A 4 StartApp xterm 
+
+Key I W 4 Iconify
+
+Key R A 4 FvwmDmenu
+
+Key 1 A 4 GotoDesk 0 0
+Key 2 A 4 GotoDesk 0 1
+Key 3 A 4 GotoDesk 0 2
+Key 4 A 4 GotoDesk 0 3
+Key 5 A 4 GotoDesk 0 4
+Key 0 A 4 GotoDesk 0 5
+
+
+Key P A 4 ArrangeWindowsTileVerticalMatrix
+
+Key 1 A S4 MoveToDesk 0 0
+Key 2 A S4 MoveToDesk 0 1
+Key 3 A S4 MoveToDesk 0 2
+Key 4 A S4 MoveToDesk 0 3
+Key 5 A S4 MoveToDesk 0 4
+Key 0 A S4 MoveToDesk 0 5
+
+#####################################################################
+# Module Configurations
+
+DestroyModuleConfig FvwmWorkspaceManager: *
+*FvwmWorkspaceManager: DeskTopScale 20
+*FvwmWorkspaceManager: Columns 3
+*FvwmWorkspaceManager: StartIconic
+*FvwmWorkspaceManager: BalloonColorset * 10
+*FvwmWorkspaceManager: Colorset * 11
+*FvwmWorkspaceManager: HilightColorset * 12
+*FvwmWorkspaceManager: WindowColorsets 13 14
+*FvwmWorkspaceManager: Font none
+*FvwmWorkspaceManager: SmallFont none
+*FvwmWorkspaceManager: Balloons All
+*FvwmWorkspaceManager: BalloonYOffset +2
+*FvwmWorkspaceManager: BalloonBorderWidth 1
+*FvwmWorkspaceManager: UseSkipList
+*FvwmWorkspaceManager: MoveThreshold 0
+*FvwmWorkspaceManager: SolidSeparators
+*FvwmWorkspaceManager: WindowBorderWidth 1
+*FvwmWorkspaceManager: Window3DBorders
+
+DestroyModuleConfig FvwmEvent: *
+*FvwmEvent: iconify   EventIconify
+*FvwmEvent: deiconify EventDeiconify
+
+DestroyModuleConfig FvwmIdent: *
+*FvwmIdent: Back white
+*FvwmIdent: Fore black
+*FvwmIdent: Font "xft:Liberation Sans:size=9"
